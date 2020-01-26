@@ -6,7 +6,13 @@ Repository contains basic samples of Terraform usage with AWS Provider.
 
 First to init Terraform type:
 ```bash
-terraform int
+terraform init
+```
+
+
+If you want to make sure your configuration is syntactically valid and internally consistent, command below will check and report errors within modules, attribute names, and value types:
+```bash
+terraform validate
 ```
 
 
