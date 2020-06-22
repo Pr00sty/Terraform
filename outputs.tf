@@ -17,3 +17,23 @@ output "instance_id" {
   value       = aws_instance.Ubuntu.id
   description = "The id of the Ubuntu_ec2 instance."
 }
+
+output "aws_VPC" {
+  value       = aws_vpc.Paw_main_vpc.id
+  description = "The id of the VPC."
+}
+
+output "aws_subnet_pub_1" {
+  value       = aws_subnet.PUB_1.id
+  description = "The id of the PUB_1 subnet."
+}
+
+output "aws_subnet_pub_2" {
+  value       = aws_subnet.PUB_2.id
+  description = "The id of the PUB_2 subnet."
+}
+
+output "aws_subnet_pub_3" {
+  value       = aws_subnet.PUB_3.id
+  description = "The id of the PUB_3 subnet."
+}
