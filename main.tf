@@ -67,7 +67,7 @@ resource "aws_subnet" "priv_3" {
 resource "aws_internet_gateway" "main_igw" {
   vpc_id = aws_vpc.main_vpc.id
   tags = {
-    name = "main_igw"
+    Name = "main_igw"
   }
 }
 
@@ -105,6 +105,39 @@ resource "aws_route_table_association" "b" {
 resource "aws_route_table_association" "c" {
   subnet_id      = aws_subnet.pub_3.id
   route_table_id = aws_route_table.pub_rt.id
+}
+
+resource "aws_security_group" "allow_ssh_http" {
+  name        = "allow_ssh_http"
+  description = "Allow SSH and HTTP inbound traffic"
+  vpc_id      = aws_vpc.main_vpc.id
+
+  ingress {
+    description = "SSH"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.main_vpc.cidr_block]
+  }
+
+  ingress {
+    description = "HTTP"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.main_vpc.cidr_block]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "allow_ssh_http"
+  }
 }
 
 resource "aws_instance" "Ubuntu" {
