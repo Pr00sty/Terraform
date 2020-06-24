@@ -202,6 +202,21 @@ resource "aws_security_group" "allow_ssh_http" {
   }
 }
 
+
+resource "aws_lb" "main_app_load_balancer" {
+  name               = "main_app_load_balancer"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [aws_security_group.allow_ssh_http.id]
+  subnets            = [aws_subnet.pub_1.id, aws_subnet.pub_2.id, aws_subnet.pub_3.id]
+
+  enable_deletion_protection = true
+
+  tags = {
+    Name = "main_app_load_balancer"
+  }
+}
+
 resource "aws_instance" "Ubuntu" {
   ami           = "ami-02df9ea15c1778c9c"
   instance_type = "t2.micro"
