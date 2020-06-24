@@ -61,8 +61,16 @@ output "aws_pub_rt" {
   value       = aws_route_table.pub_rt.id
 }
 
-output "aws_priv_rt" {
-  value       = aws_route_table.priv_rt.id
+output "aws_priv_1_rt" {
+  value       = aws_route_table.priv_1_rt.id
+}
+
+output "aws_priv_2_rt" {
+  value       = aws_route_table.priv_2_rt.id
+}
+
+output "aws_priv_3_rt" {
+  value       = aws_route_table.priv_3_rt.id
 }
 
 output "aws_rt_association_a" {

@@ -203,8 +203,8 @@ resource "aws_security_group" "allow_ssh_http" {
 }
 
 
-resource "aws_lb" "main_app_load_balancer" {
-  name               = "main_app_load_balancer"
+resource "aws_lb" "main_app_lb" {
+  name               = "main-app-lb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.allow_ssh_http.id]
