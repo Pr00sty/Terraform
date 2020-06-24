@@ -71,6 +71,43 @@ resource "aws_internet_gateway" "main_igw" {
   }
 }
 
+resource "aws_eip" "pub_1" {
+  vpc              = true
+}
+
+resource "aws_eip" "pub_2" {
+  vpc              = true
+}
+resource "aws_eip" "pub_3" {
+  vpc              = true
+}
+
+resource "aws_nat_gateway" "nat_gw_pub_1" {
+  allocation_id = aws_eip.pub_1.id
+  subnet_id     = aws_subnet.pub_1.id
+
+  tags = {
+    Name = "NAT_GW_PUB_1"
+  }
+}
+
+resource "aws_nat_gateway" "nat_gw_pub_2" {
+  allocation_id = aws_eip.pub_2.id
+  subnet_id     = aws_subnet.pub_2.id
+
+  tags = {
+    Name = "NAT_GW_PUB_2"
+  }
+}
+resource "aws_nat_gateway" "nat_gw_pub_3" {
+  allocation_id = aws_eip.pub_3.id
+  subnet_id     = aws_subnet.pub_3.id
+
+  tags = {
+    Name = "NAT_GW_PUB_3"
+  }
+}
+
 resource "aws_route_table" "pub_rt" {
   vpc_id = aws_vpc.main_vpc.id
 
@@ -84,11 +121,36 @@ resource "aws_route_table" "pub_rt" {
   }
 }
 
-resource "aws_route_table" "priv_rt" {
+resource "aws_route_table" "priv_1_rt" {
   vpc_id = aws_vpc.main_vpc.id
-
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.nat_gw_pub_1.id
+  }
   tags = {
-    Name = "priv_rt"
+    Name = "priv_1_rt"
+  }
+}
+
+resource "aws_route_table" "priv_2_rt" {
+  vpc_id = aws_vpc.main_vpc.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.nat_gw_pub_2.id
+  }
+  tags = {
+    Name = "priv_2_rt"
+  }
+}
+
+resource "aws_route_table" "priv_3_rt" {
+  vpc_id = aws_vpc.main_vpc.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.nat_gw_pub_3.id
+  }
+  tags = {
+    Name = "priv_3_rt"
   }
 }
 
