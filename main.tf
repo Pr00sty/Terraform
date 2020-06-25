@@ -202,6 +202,22 @@ resource "aws_security_group" "allow_ssh_http" {
   }
 }
 
+resource "aws_lb_target_group" "main_target_group" {
+  name     = "tf-example-lb-tg"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = aws_vpc.main_vpc.id
+  health_check {
+    protocol = "HTTP"
+    path = "/"
+    port = "traffic-port"
+    healthy_threshold = "5"
+    unhealthy_threshold = "2"
+    timeout = "5"
+    interval = "30"
+    matcher = "200"
+  }
+}
 
 resource "aws_lb" "main_app_lb" {
   name               = "main-app-lb"
@@ -217,7 +233,7 @@ resource "aws_lb" "main_app_lb" {
   }
 }
 
-resource "aws_instance" "Ubuntu" {
+resource "aws_instance" "ubuntu" {
   ami           = "ami-02df9ea15c1778c9c"
   instance_type = "t2.micro"
   subnet_id = aws_subnet.pub_1.id
@@ -232,5 +248,45 @@ resource "aws_instance" "Ubuntu" {
     Name = "Ubuntu-ec2"
     Purpose = "tutorial"
     Repo = "github.com/Pr00sty/Terraform_first_steps.git"
+  }
+}
+
+resource "aws_lb_target_group_attachment" "main" {
+  target_group_arn = aws_lb_target_group.main_target_group.arn
+  target_id        = aws_instance.ubuntu.id
+  port             = 80
+}
+
+resource "aws_placement_group" "main" {
+  name     = "main-placement-group"
+  strategy = "cluster"
+}
+
+resource "aws_launch_configuration" "as_conf" {
+  name          = "web_config"
+  image_id      = var.httpd_ubuntu_ami_id
+  instance_type = "t2.micro"
+}
+
+resource "aws_autoscaling_group" "main_as_group" {
+  name                      = "main-autoscaling-group"
+  max_size                  = 4
+  min_size                  = 2
+  health_check_grace_period = 300
+  health_check_type         = "ELB"
+  desired_capacity          = 2
+  force_delete              = true
+  placement_group           = aws_placement_group.main.id
+  launch_configuration      = aws_launch_configuration.as_conf.name
+  vpc_zone_identifier       = [aws_subnet.priv_1.id, aws_subnet.priv_2.id, aws_subnet.priv_3.id]
+
+  tag {
+    key                 = "Name"
+    value               = "bar"
+    propagate_at_launch = true
+  }
+
+  timeouts {
+    delete = "15m"
   }
 }
