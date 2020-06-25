@@ -210,7 +210,7 @@ resource "aws_lb" "main_app_lb" {
   security_groups    = [aws_security_group.allow_ssh_http.id]
   subnets            = [aws_subnet.pub_1.id, aws_subnet.pub_2.id, aws_subnet.pub_3.id]
 
-  enable_deletion_protection = true
+  enable_deletion_protection = false
 
   tags = {
     Name = "main_app_load_balancer"
